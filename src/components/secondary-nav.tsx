@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserNav } from './user-nav';
 
-const navLinks = {
+const mainNavLinks = {
   dashboard: {
     title: 'Dashboard',
     links: [{ href: '/dashboard', label: 'Overview' }],
@@ -39,11 +39,18 @@ const navLinks = {
       { href: '/settings', label: 'Company Profile' },
     ],
   },
+};
+
+const allLinks = Object.values(mainNavLinks).flatMap(section => section.links);
+
+const navLinks = {
+  ...mainNavLinks,
   all: {
     title: 'Menu',
-    links: Object.values(navLinks).flatMap(section => section.links)
+    links: allLinks,
   }
 };
+
 
 export type NavItem = keyof typeof navLinks;
 
@@ -55,8 +62,7 @@ interface SecondaryNavProps {
 function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavProps) {
   const pathname = usePathname();
 
-  const renderNavSection = (itemKey: keyof typeof navLinks) => {
-    if (itemKey === 'all') return null;
+  const renderNavSection = (itemKey: keyof typeof mainNavLinks) => {
     const item = navLinks[itemKey];
     const sectionTitle = isMobile ? item.title : undefined;
 
@@ -87,7 +93,7 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
   if (isMobile) {
      return (
         <nav className="grid items-start p-4 text-sm font-medium">
-             {Object.keys(navLinks).map((key) => renderNavSection(key as keyof typeof navLinks))}
+             {Object.keys(mainNavLinks).map((key) => renderNavSection(key as keyof typeof mainNavLinks))}
         </nav>
      )
   }
@@ -101,7 +107,7 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
     <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-card w-[280px]">
         <div className="flex-1 overflow-y-auto pt-4">
             <nav className="grid items-start p-4 text-sm font-medium">
-                {renderNavSection(activeItem as keyof typeof navLinks)}
+                {renderNavSection(activeItem as keyof typeof mainNavLinks)}
             </nav>
         </div>
         <div className="mt-auto p-4 border-t">
