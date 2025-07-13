@@ -14,6 +14,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { cn } from '@/lib/utils';
 import type { NavItem } from './secondary-nav';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 const primaryNavItems = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -31,9 +33,16 @@ interface PrimaryNavProps {
 }
 
 export function PrimaryNav({ activeItem, setActiveItem, isExpanded }: PrimaryNavProps) {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const currentPath = pathname.split('/')[1] || 'dashboard';
+    setActiveItem(currentPath as NavItem);
+  }, [pathname, setActiveItem]);
+
   return (
-    <aside className="h-full flex flex-col items-center gap-4 border-r bg-background p-2 overflow-hidden">
-      <div className="flex h-[52px] items-center justify-center shrink-0">
+    <aside className="h-full flex flex-col items-center gap-4 border-r bg-background p-2">
+      <div className="flex h-[52px] shrink-0 items-center justify-center w-full">
          <Link href="/" className="flex items-center gap-2 font-semibold">
             <Logo expanded={isExpanded} />
         </Link>

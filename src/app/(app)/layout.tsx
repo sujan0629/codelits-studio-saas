@@ -1,7 +1,6 @@
 
 'use client';
 
-import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +12,7 @@ import { PrimaryNav } from '@/components/primary-nav';
 import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
 import { gsap } from 'gsap';
 import { usePathname } from 'next/navigation';
+import { Logo } from '@/components/logo';
 
 export default function AppLayout({
   children,
@@ -33,23 +33,38 @@ export default function AppLayout({
   }, [pathname]);
 
   useEffect(() => {
-    const primaryNavWidth = isPrimaryNavExpanded ? 240 : 56;
+    const primaryNavWidthExpanded = 240;
+    const primaryNavWidthCollapsed = 56;
     const secondaryNavWidth = 280;
 
-    gsap.to(primaryNavRef.current, { width: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
-    gsap.to(secondaryNavRef.current, { left: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
-    gsap.to(mainContentRef.current, { marginLeft: isPrimaryNavExpanded ? primaryNavWidth : primaryNavWidth + secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
-    
-    if (isPrimaryNavExpanded) {
-      gsap.to(secondaryNavRef.current, { x: -secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
-    } else {
-      gsap.to(secondaryNavRef.current, { x: 0, duration: 0.3, ease: 'power2.inOut' });
-    }
+    gsap.to(primaryNavRef.current, { 
+      width: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed, 
+      duration: 0.3, 
+      ease: 'power2.inOut' 
+    });
+
+    gsap.to(secondaryNavRef.current, { 
+      left: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
+      x: isPrimaryNavExpanded ? -secondaryNavWidth : 0, 
+      duration: 0.3, 
+      ease: 'power2.inOut' 
+    });
+
+    gsap.to(mainContentRef.current, { 
+      marginLeft: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed + secondaryNavWidth,
+      duration: 0.3, 
+      ease: 'power2.inOut' 
+    });
 
   }, [isPrimaryNavExpanded]);
 
   const handlePrimaryNavClick = (item: NavItem) => {
-    setActivePrimaryNav(item);
+    if (activePrimaryNav === item && !isPrimaryNavExpanded) {
+        // If clicking the same item and it's already open, do nothing special
+    } else {
+        setActivePrimaryNav(item);
+    }
+    // Always collapse on click
     setIsPrimaryNavExpanded(false); 
   };
 
@@ -60,19 +75,19 @@ export default function AppLayout({
         onMouseEnter={() => setIsPrimaryNavExpanded(true)} 
         onMouseLeave={() => setIsPrimaryNavExpanded(false)}
       >
-        <div ref={primaryNavRef}>
+        <div ref={primaryNavRef} className="overflow-hidden">
             <PrimaryNav 
                 activeItem={activePrimaryNav} 
                 setActiveItem={handlePrimaryNavClick}
                 isExpanded={isPrimaryNavExpanded} 
             />
         </div>
-        <div ref={secondaryNavRef}>
+        <div ref={secondaryNavRef} className="fixed top-0 h-full">
             <SecondaryNav activeItem={activePrimaryNav} />
         </div>
       </div>
       
-      <div ref={mainContentRef} className="flex flex-col transition-all duration-300 ease-in-out md:ml-[336px]">
+      <div ref={mainContentRef} className="flex flex-col md:ml-[336px]">
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
           <Sheet>
             <SheetTrigger asChild>
