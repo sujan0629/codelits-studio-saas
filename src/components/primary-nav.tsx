@@ -10,12 +10,12 @@ import {
   Users,
 } from 'lucide-react';
 import { Logo } from './logo';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { cn } from '@/lib/utils';
 import type { NavItem } from './secondary-nav';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const primaryNavItems = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -44,40 +44,47 @@ export function PrimaryNav({ activeItem, setActiveItem, isExpanded }: PrimaryNav
 
   return (
     <aside className="h-full flex flex-col items-start gap-4 border-r bg-background p-2">
-      <div className={cn("flex h-[52px] items-center shrink-0", isExpanded ? "px-4" : "px-2 justify-center")}>
-         <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Logo expanded={isExpanded} />
+      <div className={cn('flex h-[52px] items-center shrink-0', isExpanded ? 'px-4' : 'px-2 justify-center')}>
+        <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Logo expanded={isExpanded} />
         </Link>
       </div>
       <TooltipProvider delayDuration={0}>
         <nav className="flex flex-col items-start gap-2 w-full">
-          {primaryNavItems.map((item) => (
-            <Tooltip key={item.id}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setActiveItem(item.id);
-                  }}
-                  className={cn(
-                    'flex h-9 items-center justify-start rounded-lg text-muted-foreground transition-colors hover:text-foreground w-full px-3 gap-3',
-                    activeItem === item.id && 'bg-accent text-accent-foreground',
-                    !isExpanded && 'w-9 justify-center'
-                  )}
-                >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  <span className={cn(
-                      "whitespace-nowrap transition-opacity duration-200",
-                      isExpanded ? "opacity-100" : "opacity-0 sr-only"
-                  )}>{item.label}</span>
-                </Link>
-              </TooltipTrigger>
-              {!isExpanded && (
-                 <TooltipContent side="right">{item.label}</TooltipContent>
-              )}
-            </Tooltip>
-          ))}
+          {primaryNavItems.map((item) => {
+             const isActive = activeItem === item.id;
+             return (
+              <Tooltip key={item.id}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveItem(item.id);
+                    }}
+                    className={cn(
+                      'flex h-9 items-center rounded-lg text-muted-foreground transition-colors hover:text-foreground w-full px-3 gap-3',
+                      isActive && 'bg-accent text-accent-foreground',
+                      !isExpanded && 'w-9 justify-center'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    <span
+                      className={cn(
+                        'whitespace-nowrap transition-opacity duration-200',
+                        isExpanded ? 'opacity-100' : 'opacity-0 sr-only'
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                </TooltipTrigger>
+                {!isExpanded && (
+                  <TooltipContent side="right">{item.label}</TooltipContent>
+                )}
+              </Tooltip>
+             )
+          })}
         </nav>
       </TooltipProvider>
     </aside>

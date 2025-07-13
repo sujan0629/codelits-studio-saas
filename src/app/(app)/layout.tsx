@@ -21,7 +21,7 @@ export default function AppLayout({
 }>) {
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
   const [isPrimaryNavExpanded, setIsPrimaryNavExpanded] = useState(false);
-  
+
   const primaryNavRef = useRef<HTMLDivElement>(null);
   const secondaryNavRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ export default function AppLayout({
     const currentPath = pathname.split('/')[1] || 'dashboard';
     const navItem = SecondaryNav.navLinks[currentPath as NavItem];
     if (navItem) {
-        setActivePrimaryNav(currentPath as NavItem);
+      setActivePrimaryNav(currentPath as NavItem);
     }
   }, [pathname]);
 
@@ -40,82 +40,78 @@ export default function AppLayout({
     const primaryNavWidthCollapsed = 56;
     const secondaryNavWidth = 280;
 
-    gsap.to(primaryNavRef.current, { 
-      width: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed, 
-      duration: 0.3, 
-      ease: 'power2.inOut' 
+    gsap.to(primaryNavRef.current, {
+      width: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
+      duration: 0.3,
+      ease: 'power2.inOut',
     });
 
-    gsap.to(secondaryNavRef.current, { 
+    gsap.to(secondaryNavRef.current, {
       left: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
-      duration: 0.3, 
-      ease: 'power2.inOut' 
+      duration: 0.3,
+      ease: 'power2.inOut',
     });
 
-    gsap.to(mainContentRef.current, { 
-      marginLeft: isPrimaryNavExpanded ? (primaryNavWidthExpanded + secondaryNavWidth) : (primaryNavWidthCollapsed + secondaryNavWidth),
-      duration: 0.3, 
-      ease: 'power2.inOut' 
+    gsap.to(mainContentRef.current, {
+      marginLeft: isPrimaryNavExpanded
+        ? primaryNavWidthExpanded + secondaryNavWidth
+        : primaryNavWidthCollapsed + secondaryNavWidth,
+      duration: 0.3,
+      ease: 'power2.inOut',
     });
-
   }, [isPrimaryNavExpanded]);
 
   const handlePrimaryNavClick = (item: NavItem) => {
     setActivePrimaryNav(item);
     setIsPrimaryNavExpanded(false);
-  }
-
+  };
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
       <div className="hidden md:flex fixed top-0 left-0 h-full z-20">
-        <div 
-            ref={primaryNavRef}
-            className="overflow-hidden"
-            onMouseEnter={() => setIsPrimaryNavExpanded(true)} 
-            onMouseLeave={() => setIsPrimaryNavExpanded(false)}
+        <div
+          ref={primaryNavRef}
+          className="overflow-hidden"
+          onMouseEnter={() => setIsPrimaryNavExpanded(true)}
+          onMouseLeave={() => setIsPrimaryNavExpanded(false)}
         >
-            <PrimaryNav 
-                activeItem={activePrimaryNav} 
-                setActiveItem={handlePrimaryNavClick}
-                isExpanded={isPrimaryNavExpanded} 
-            />
+          <PrimaryNav
+            activeItem={activePrimaryNav}
+            setActiveItem={handlePrimaryNavClick}
+            isExpanded={isPrimaryNavExpanded}
+          />
         </div>
         <div ref={secondaryNavRef} className="fixed top-0 h-full w-[280px]">
-            <SecondaryNav activeItem={activePrimaryNav} />
+          <SecondaryNav activeItem={activePrimaryNav} />
         </div>
       </div>
-      
+
       <div ref={mainContentRef} className="flex flex-col md:ml-[336px]">
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
+              <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                 <PanelLeft className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col p-0">
-               <div className="flex h-full max-h-screen flex-col">
-                  <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                    <Link href="/" className="flex items-center gap-2 font-semibold">
-                      <Logo expanded={true} />
-                    </Link>
-                  </div>
-                  <div className="flex-1 overflow-y-auto">
-                    <SecondaryNav activeItem={'all'} isMobile={true} />
-                  </div>
-                   <div className="mt-auto p-4 border-t">
-                    <UserNav />
-                  </div>
+              <div className="flex h-full max-h-screen flex-col">
+                <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                  <Link href="/" className="flex items-center gap-2 font-semibold">
+                    <Logo expanded={true} />
+                  </Link>
                 </div>
+                <div className="flex-1 overflow-y-auto">
+                  <SecondaryNav activeItem={'all'} isMobile={true} />
+                </div>
+                <div className="mt-auto p-4 border-t">
+                  <UserNav />
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
-           <div className="w-full flex-1">
+          <div className="w-full flex-1">
             <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -128,14 +124,12 @@ export default function AppLayout({
             </form>
           </div>
           <Button variant="outline" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
+            <Bell className="h-4 w-4" />
+            <span className="sr-only">Toggle notifications</span>
           </Button>
-           <UserNav />
+          <UserNav />
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">
-          {children}
-        </main>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">{children}</main>
       </div>
     </div>
   );
