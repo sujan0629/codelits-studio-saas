@@ -45,13 +45,12 @@ export default function AppLayout({
 
     gsap.to(secondaryNavRef.current, { 
       left: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
-      x: isPrimaryNavExpanded ? -secondaryNavWidth : 0, 
       duration: 0.3, 
       ease: 'power2.inOut' 
     });
 
     gsap.to(mainContentRef.current, { 
-      marginLeft: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed + secondaryNavWidth,
+      marginLeft: isPrimaryNavExpanded ? primaryNavWidthExpanded : (primaryNavWidthCollapsed + secondaryNavWidth),
       duration: 0.3, 
       ease: 'power2.inOut' 
     });
@@ -59,12 +58,7 @@ export default function AppLayout({
   }, [isPrimaryNavExpanded]);
 
   const handlePrimaryNavClick = (item: NavItem) => {
-    if (activePrimaryNav === item && !isPrimaryNavExpanded) {
-        // If clicking the same item and it's already open, do nothing special
-    } else {
-        setActivePrimaryNav(item);
-    }
-    // Always collapse on click
+    setActivePrimaryNav(item);
     setIsPrimaryNavExpanded(false); 
   };
 
@@ -82,7 +76,7 @@ export default function AppLayout({
                 isExpanded={isPrimaryNavExpanded} 
             />
         </div>
-        <div ref={secondaryNavRef} className="fixed top-0 h-full">
+        <div ref={secondaryNavRef} className="fixed top-0 h-full w-[280px]">
             <SecondaryNav activeItem={activePrimaryNav} />
         </div>
       </div>

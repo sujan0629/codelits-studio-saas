@@ -37,12 +37,14 @@ export function PrimaryNav({ activeItem, setActiveItem, isExpanded }: PrimaryNav
 
   useEffect(() => {
     const currentPath = pathname.split('/')[1] || 'dashboard';
-    setActiveItem(currentPath as NavItem);
+    if (primaryNavItems.some(item => item.id === currentPath)) {
+      setActiveItem(currentPath as NavItem);
+    }
   }, [pathname, setActiveItem]);
 
   return (
-    <aside className="h-full flex flex-col items-center gap-4 border-r bg-background p-2">
-      <div className="flex h-[52px] shrink-0 items-center justify-center w-full">
+    <aside className="h-full flex flex-col items-start gap-4 border-r bg-background p-2">
+      <div className={cn("flex h-[52px] items-center justify-center shrink-0", isExpanded ? "px-4" : "px-2")}>
          <Link href="/" className="flex items-center gap-2 font-semibold">
             <Logo expanded={isExpanded} />
         </Link>
@@ -55,7 +57,7 @@ export function PrimaryNav({ activeItem, setActiveItem, isExpanded }: PrimaryNav
                 <Link
                   href={item.href}
                   onClick={(e) => {
-                    e.preventDefault();
+                    e.preventDefault(); // Prevent default link behavior to handle with state
                     setActiveItem(item.id);
                   }}
                   className={cn(
