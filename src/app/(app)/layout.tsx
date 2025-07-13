@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Bell, PanelLeft, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PrimaryNav } from '@/components/primary-nav';
 import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
+import { gsap } from 'gsap';
+import { usePathname } from 'next/navigation';
+import { SecondaryNav } from '@/components/secondary-nav';
 
 export default function AppLayout({
   children,
@@ -18,15 +21,52 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
+  const [isPrimaryNavExpanded, setIsPrimaryNavExpanded] = useState(false);
+  
+  const primaryNavRef = useRef<HTMLDivElement>(null);
+  const secondaryNavRef = useRef<HTMLDivElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Determine active nav from URL on initial load
+    const currentPath = pathname.split('/')[1] || 'dashboard';
+    setActivePrimaryNav(currentPath as NavItem);
+  }, [pathname]);
+
+  useEffect(() => {
+    const primaryNavWidth = isPrimaryNavExpanded ? 280 : 56;
+    const secondaryNavWidth = 280;
+
+    gsap.to(primaryNavRef.current, { width: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+    gsap.to(secondaryNavRef.current, { left: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+    gsap.to(mainContentRef.current, { marginLeft: primaryNavWidth + secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+
+  }, [isPrimaryNavExpanded]);
+
+
+  const handlePrimaryNavClick = (item: NavItem) => {
+    setActivePrimaryNav(item);
+    setIsPrimaryNavExpanded(false); // Collapse on click
+  };
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[auto_1fr]">
-      <div className="hidden md:flex">
-        <PrimaryNav activeItem={activePrimaryNav} setActiveItem={setActivePrimaryNav} />
-        <SecondaryNav activeItem={activePrimaryNav} />
+    <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
+      <div className="hidden md:flex fixed top-0 left-0 h-full z-20">
+        <div ref={primaryNavRef} onMouseEnter={() => setIsPrimaryNavExpanded(true)} onMouseLeave={() => setIsPrimaryNavExpanded(false)}>
+            <PrimaryNav 
+                activeItem={activePrimaryNav} 
+                setActiveItem={handlePrimaryNavClick}
+                isExpanded={isPrimaryNavExpanded} 
+            />
+        </div>
+        <div ref={secondaryNavRef}>
+            <SecondaryNav activeItem={activePrimaryNav} />
+        </div>
       </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
+      
+      <div ref={mainContentRef} className="flex flex-col transition-all duration-300 ease-in-out">
+        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -55,6 +95,9 @@ export default function AppLayout({
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
+            <h1 className="text-lg font-semibold capitalize">{SecondaryNav.navLinks[activePrimaryNav]?.title}</h1>
+          </div>
+           <div className="w-full flex-1">
             <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

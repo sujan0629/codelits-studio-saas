@@ -39,9 +39,13 @@ const navLinks = {
       { href: '/settings', label: 'Company Profile' },
     ],
   },
+  all: {
+    title: 'Menu',
+    links: Object.values(navLinks).flatMap(section => section.links)
+  }
 };
 
-export type NavItem = keyof typeof navLinks | 'all';
+export type NavItem = keyof typeof navLinks;
 
 interface SecondaryNavProps {
   activeItem: NavItem;
@@ -52,11 +56,13 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
   const pathname = usePathname();
 
   const renderNavSection = (itemKey: keyof typeof navLinks) => {
+    if (itemKey === 'all') return null;
     const item = navLinks[itemKey];
+    const sectionTitle = isMobile ? item.title : undefined;
+
     return (
       <div key={item.title}>
-        {!isMobile && <div className="h-4" />}
-        {isMobile && <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">{item.title}</h2>}
+        {sectionTitle && <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">{sectionTitle}</h2>}
         <div className="space-y-1">
           {item.links.map((link) => {
             const isActive = pathname === link.href;
@@ -66,8 +72,7 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
                 href={link.href}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-                  isActive ? 'bg-muted text-primary' : 'hover:bg-muted/50',
-                  'font-medium'
+                  isActive ? 'bg-muted text-primary font-semibold' : 'hover:bg-muted/50 font-medium',
                 )}
               >
                 {link.label}
@@ -79,8 +84,6 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
     );
   };
   
-  const navData = navLinks[activeItem as keyof typeof navLinks];
-  
   if (isMobile) {
      return (
         <nav className="grid items-start p-4 text-sm font-medium">
@@ -89,16 +92,14 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
      )
   }
 
-  if (!navData) {
+  const navData = navLinks[activeItem as keyof typeof navLinks];
+  if (!navData || activeItem === 'all') {
     return null;
   }
 
   return (
     <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-card w-[280px]">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <h2 className="text-lg font-semibold">{navData.title}</h2>
-        </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pt-4">
             <nav className="grid items-start p-4 text-sm font-medium">
                 {renderNavSection(activeItem as keyof typeof navLinks)}
             </nav>
