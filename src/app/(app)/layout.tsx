@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Bell, PanelLeft, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PrimaryNav } from '@/components/primary-nav';
 import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
 import { usePathname } from 'next/navigation';
@@ -21,23 +21,37 @@ export default function AppLayout({
 }>) {
   const pathname = usePathname();
   
-  const initialNavItem = (pathname.split('/')[1] || 'dashboard') as NavItem;
-  const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>(initialNavItem);
+  const getNavItemFromPath = (path: string): NavItem => {
+    const segment = path.split('/')[1];
+    const navItems: NavItem[] = ['dashboard', 'apps', 'team', 'billing', 'support', 'settings'];
+    return navItems.find(item => item === segment) || 'dashboard';
+  };
+
+  const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>(getNavItemFromPath(pathname));
   const [isPrimaryNavHovered, setIsPrimaryNavHovered] = useState(false);
   const [isSecondaryNavOpen, setIsSecondaryNavOpen] = useState(true);
+
+  useEffect(() => {
+    setActivePrimaryNav(getNavItemFromPath(pathname));
+    setIsSecondaryNavOpen(true);
+  }, [pathname]);
 
   const handlePrimaryNavClick = (item: NavItem) => {
     setActivePrimaryNav(item);
     setIsSecondaryNavOpen(true);
+    // When an item is clicked while hovered, force the hover state to false
+    // This will collapse the primary nav and show the secondary nav immediately
+    if (isPrimaryNavHovered) {
+        setIsPrimaryNavHovered(false);
+    }
   }
   
-  // The secondary nav remains open on link clicks
   const handleSecondaryNavClick = () => {
-    // No longer closing the nav here
+    // The secondary nav should remain open on link clicks
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col bg-background">
        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
@@ -49,14 +63,11 @@ export default function AppLayout({
           <SheetContent side="left" className="flex flex-col p-0 sm:max-w-xs">
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <Link href="/" className="flex items-center gap-2 font-semibold">
-                  <Logo />
+                  <Logo expanded={true} />
                 </Link>
               </div>
               <div className='flex-1 overflow-y-auto'>
                 <SecondaryNav activeItem={'all'} isMobile={true} />
-              </div>
-              <div className="mt-auto p-4 border-t">
-                <UserNav />
               </div>
           </SheetContent>
         </Sheet>
@@ -76,8 +87,8 @@ export default function AppLayout({
           <UserNav />
         </div>
       </header>
-      <div className="flex flex-1">
-        <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
+        <div className="hidden md:flex">
           <PrimaryNav 
             activeItem={activePrimaryNav} 
             onItemClick={handlePrimaryNavClick}
@@ -91,8 +102,11 @@ export default function AppLayout({
           />
         </div>
         <main className={cn(
-          "flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40 transition-all duration-300 ease-in-out",
-          isSecondaryNavOpen ? 'md:ml-[280px]' : 'md:ml-[72px]'
+          "flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40 transition-all duration-300 ease-in-out overflow-y-auto",
+          // When hovered, secondary nav is closed, main content should not have extra margin
+          isPrimaryNavHovered ? 'md:ml-[224px]' : 'md:ml-[72px]',
+          // When secondary nav is open, add margin
+          isSecondaryNavOpen && !isPrimaryNavHovered ? 'md:ml-[280px]' : 'md:ml-[72px]'
           )}>
           {children}
         </main>

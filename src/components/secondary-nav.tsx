@@ -4,37 +4,52 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserNav } from './user-nav';
 
 const navLinks = {
   dashboard: {
     title: 'Dashboard',
-    links: [{ href: '/dashboard', label: 'Overview' }],
+    links: [
+        { href: '/dashboard', label: 'Overview' },
+    ],
   },
   apps: {
     title: 'Applications',
-    links: [{ href: '/apps', label: 'Manage Apps' }],
+    links: [
+        { href: '/apps', label: 'Manage Apps' },
+        { href: '/apps/discover', label: 'Discover' },
+    ],
   },
   team: {
-    title: 'Team',
-    links: [{ href: '/team', label: 'Manage Team' }],
+    title: 'Team Management',
+    links: [
+        { href: '/team', label: 'Users & Roles' },
+        { href: '/team/invitations', label: 'Invitations' },
+    ],
   },
   billing: {
-    title: 'Billing',
+    title: 'Subscription',
     links: [
-      { href: '/billing', label: 'Subscription' },
+      { href: '/billing', label: 'Billing Summary' },
+      { href: '/billing/history', label: 'Billing History' },
+      { href: '/billing/payment-methods', label: 'Payment Methods' },
+      { href: '/billing/settings', label: 'Billing Settings' },
     ],
   },
   support: {
-    title: 'Support',
+    title: 'Support Center',
     links: [
       { href: '/support', label: 'My Tickets' },
+      { href: '/support/new', label: 'Create Ticket' },
+      { href: '/support/docs', label: 'Documentation' },
     ],
   },
   settings: {
     title: 'Settings',
     links: [
       { href: '/settings', label: 'Company Profile' },
+      { href: '/settings/security', label: 'Security' },
+      { href: '/settings/notifications', label: 'Notifications' },
+      { href: '/settings/branding', label: 'Branding' },
     ],
   },
 };
@@ -96,20 +111,17 @@ export function SecondaryNav({ activeItem, isMobile = false, isOpen = true, onLi
   return (
     <aside 
       className={cn(
-        "hidden md:fixed md:left-[72px] md:top-0 md:flex h-full flex-col gap-2 border-r bg-background w-[220px] z-10 transition-transform duration-300 ease-in-out",
+        "hidden md:fixed md:left-[72px] md:top-14 md:flex h-[calc(100vh-56px)] flex-col gap-2 border-r bg-background w-[220px] z-10 transition-transform duration-300 ease-in-out",
         isOpen ? 'translate-x-0' : '-translate-x-full'
       )}
     >
-        <div className="flex h-[60px] items-center border-b px-4">
+        <div className="flex h-[52px] items-center border-b px-4">
             <h2 className="text-lg font-semibold">{navData.title}</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
             <nav className="grid items-start p-4 text-sm font-medium">
                 {renderNavSection(activeItem as keyof typeof navLinks)}
             </nav>
-        </div>
-        <div className="mt-auto p-4 border-t">
-            <UserNav />
         </div>
     </aside>
   );
