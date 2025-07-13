@@ -83,3 +83,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes top-loader-animation {
+    0% {
+      left: -100%;
+      width: 100%;
+    }
+    100% {
+      left: 100%;
+      width: 10%;
+    }
+  }
+  .top-loader-bar {
+    animation: top-loader-animation 1.5s ease-in-out infinite;
+  }
+}

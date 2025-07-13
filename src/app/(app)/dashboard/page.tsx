@@ -8,8 +8,8 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +33,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const chartData = [
   { month: 'January', desktop: 186 },
@@ -51,6 +52,103 @@ const chartConfig = {
 };
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); // Simulate loading delay
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/2 mt-1" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/2 mt-1" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Apps</CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/2 mt-1" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Open Tickets</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-1/2 mt-1" />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
+          <Card className="xl:col-span-2">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Recent activities from your account.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[...Array(2)].map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-5 w-[150px]" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-[80px]" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-[80px]" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-5 w-[100px] ml-auto" /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Usage Overview</CardTitle>
+              <CardDescription>January - June 2024</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[200px] w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -115,7 +213,7 @@ export default function Dashboard() {
               </CardDescription>
             </div>
             <Button asChild size="sm" className="ml-auto gap-1">
-              <Link href="/dashboard/team">
+              <Link href="/team">
                 View All
                 <ArrowUpRight className="h-4 w-4" />
               </Link>

@@ -13,6 +13,7 @@ import { gsap } from 'gsap';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { useRouter } from 'next/navigation';
+import { TopLoader } from '@/components/top-loader';
 
 export default function AppLayout({
   children,
@@ -21,7 +22,9 @@ export default function AppLayout({
 }>) {
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
   const [isPrimaryNavHovered, setIsPrimaryNavHovered] = useState(false);
-  
+
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const router = useRouter();
 
   const primaryNavRef = useRef<HTMLDivElement>(null);
@@ -31,6 +34,8 @@ export default function AppLayout({
 
   // Update active nav based on URL path
   useEffect(() => {
+        setIsNavigating(false);
+
     const currentPath = pathname.split('/')[1] || 'dashboard';
     if (SecondaryNav.navLinks[currentPath as NavItem]) {
       setActivePrimaryNav(currentPath as NavItem);
@@ -70,14 +75,16 @@ export default function AppLayout({
   };
 
   // This is your primary nav click handler passed down to PrimaryNav component
-  const handlePrimaryNavClick = (item: NavItem) => {
-    setActivePrimaryNav(item);
-    setIsPrimaryNavHovered(false); // shrink primary nav on click
+const handlePrimaryNavClick = (item: NavItem) => {
+  setActivePrimaryNav(item);
+  setIsPrimaryNavHovered(false); // shrink primary nav on click
 
-    // Navigate to first secondary nav link for this primary item
-    const firstLink = getFirstSecondaryLink(item);
-    router.push(firstLink);
-  };
+  setIsNavigating(true); // <-- trigger TopLoader
+
+  const firstLink = getFirstSecondaryLink(item);
+  router.push(firstLink);
+};
+
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
@@ -106,7 +113,8 @@ export default function AppLayout({
       {/* Main content */}
       <div ref={mainContentRef} className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-          <Sheet>
+                   <TopLoader isNavigating={isNavigating} />
+ <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                 <PanelLeft className="h-5 w-5" />
