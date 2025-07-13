@@ -29,7 +29,9 @@ export default function AppLayout({
 
   useEffect(() => {
     const currentPath = pathname.split('/')[1] || 'dashboard';
-    setActivePrimaryNav(currentPath as NavItem);
+    if (SecondaryNav.navLinks[currentPath as NavItem]) {
+        setActivePrimaryNav(currentPath as NavItem);
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -50,17 +52,13 @@ export default function AppLayout({
     });
 
     gsap.to(mainContentRef.current, { 
-      marginLeft: isPrimaryNavExpanded ? primaryNavWidthExpanded : (primaryNavWidthCollapsed + secondaryNavWidth),
+      marginLeft: isPrimaryNavExpanded ? (primaryNavWidthExpanded + secondaryNavWidth) : (primaryNavWidthCollapsed + secondaryNavWidth),
       duration: 0.3, 
       ease: 'power2.inOut' 
     });
 
   }, [isPrimaryNavExpanded]);
 
-  const handlePrimaryNavClick = (item: NavItem) => {
-    setActivePrimaryNav(item);
-    setIsPrimaryNavExpanded(false); 
-  };
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
@@ -72,7 +70,7 @@ export default function AppLayout({
         <div ref={primaryNavRef} className="overflow-hidden">
             <PrimaryNav 
                 activeItem={activePrimaryNav} 
-                setActiveItem={handlePrimaryNavClick}
+                setActiveItem={setActivePrimaryNav}
                 isExpanded={isPrimaryNavExpanded} 
             />
         </div>
