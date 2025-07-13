@@ -1,4 +1,4 @@
-# **App Name**: Codelits Hub
+# **App Name**: Codelits SaaS Hub
 
 ## Core Features:
 
