@@ -28,7 +28,6 @@ export default function AppLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    // Determine active nav from URL on initial load
     const currentPath = pathname.split('/')[1] || 'dashboard';
     setActivePrimaryNav(currentPath as NavItem);
   }, [pathname]);
@@ -39,20 +38,29 @@ export default function AppLayout({
 
     gsap.to(primaryNavRef.current, { width: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
     gsap.to(secondaryNavRef.current, { left: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
-    gsap.to(mainContentRef.current, { marginLeft: primaryNavWidth + secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+    gsap.to(mainContentRef.current, { marginLeft: isPrimaryNavExpanded ? primaryNavWidth : primaryNavWidth + secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+    
+    if (isPrimaryNavExpanded) {
+      gsap.to(secondaryNavRef.current, { x: -secondaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
+    } else {
+      gsap.to(secondaryNavRef.current, { x: 0, duration: 0.3, ease: 'power2.inOut' });
+    }
 
   }, [isPrimaryNavExpanded]);
 
-
   const handlePrimaryNavClick = (item: NavItem) => {
     setActivePrimaryNav(item);
-    setIsPrimaryNavExpanded(false); // Collapse on click
+    setIsPrimaryNavExpanded(false); 
   };
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
-      <div className="hidden md:flex fixed top-0 left-0 h-full z-20">
-        <div ref={primaryNavRef} onMouseEnter={() => setIsPrimaryNavExpanded(true)} onMouseLeave={() => setIsPrimaryNavExpanded(false)}>
+      <div 
+        className="hidden md:flex fixed top-0 left-0 h-full z-20"
+        onMouseEnter={() => setIsPrimaryNavExpanded(true)} 
+        onMouseLeave={() => setIsPrimaryNavExpanded(false)}
+      >
+        <div ref={primaryNavRef}>
             <PrimaryNav 
                 activeItem={activePrimaryNav} 
                 setActiveItem={handlePrimaryNavClick}
@@ -64,11 +72,8 @@ export default function AppLayout({
         </div>
       </div>
       
-      <div ref={mainContentRef} className="flex flex-col transition-all duration-300 ease-in-out">
+      <div ref={mainContentRef} className="flex flex-col transition-all duration-300 ease-in-out md:ml-[336px]">
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
-          <Link href="/" className="hidden items-center gap-2 font-semibold md:flex">
-            <Logo expanded={true} />
-          </Link>
           <Sheet>
             <SheetTrigger asChild>
               <Button
