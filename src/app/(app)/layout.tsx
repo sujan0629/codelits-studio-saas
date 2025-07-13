@@ -13,7 +13,6 @@ import { PrimaryNav } from '@/components/primary-nav';
 import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
 import { gsap } from 'gsap';
 import { usePathname } from 'next/navigation';
-import { SecondaryNav } from '@/components/secondary-nav';
 
 export default function AppLayout({
   children,
