@@ -29,7 +29,7 @@ const teamMembers = [
 
 export default function TeamPage() {
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Team Management</h1>
         <Dialog>
@@ -124,6 +124,6 @@ export default function TeamPage() {
           </Table>
         </CardContent>
       </Card>
-    </>
+    </div>
   )
 }

@@ -2,95 +2,89 @@
 'use client';
 
 import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import {
   LayoutDashboard,
   AppWindow,
   Users,
   CreditCard,
   MessageSquare,
   Settings,
-  BarChart3,
-  ChevronRight,
+  Badge,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
+import { Logo } from './logo';
 
 const navItems = [
   {
-    title: 'Dashboards',
-    items: [{ href: '/dashboard', icon: LayoutDashboard, label: 'Overview' }],
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    label: 'Dashboard',
   },
   {
-    title: 'Management',
-    items: [
-      { href: '/dashboard/apps', icon: AppWindow, label: 'Apps' },
-      { href: '/dashboard/team', icon: Users, label: 'Team' },
-      { href: '/dashboard/billing', icon: CreditCard, label: 'Billing' },
-    ],
+    href: '/apps',
+    icon: AppWindow,
+    label: 'Apps',
   },
   {
-    title: 'Support & Settings',
-    items: [
-      { href: '/dashboard/support', icon: MessageSquare, label: 'Support' },
-      { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
-    ],
+    href: '/team',
+    icon: Users,
+    label: 'Team',
+  },
+  {
+    href: '/billing',
+    icon: CreditCard,
+    label: 'Billing',
+  },
+   {
+    href: '/support',
+    icon: MessageSquare,
+    label: 'Support',
+  },
+  {
+    href: '/settings',
+    icon: Settings,
+    label: 'Settings',
   },
 ];
 
-export function MainNav() {
+export function MainNav({ isMobile = false }: { isMobile?: boolean }) {
   const pathname = usePathname();
-  const { state } = useSidebar();
-  const isCollapsed = state === 'collapsed';
+
+  const renderLink = (item: (typeof navItems)[0]) => {
+    const isActive = pathname.startsWith(`/dashboard${item.href}`) || (pathname === '/dashboard' && item.href === '/dashboard');
+    return (
+      <Link
+        key={item.href}
+        href={`/dashboard${item.href === '/dashboard' ? '' : item.href}`}
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
+          isActive && 'bg-muted text-primary'
+        )}
+      >
+        <item.icon className="h-4 w-4" />
+        {item.label}
+      </Link>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <nav className="grid gap-2 text-lg font-medium">
+        <Link
+          href="#"
+          className="flex items-center gap-2 text-lg font-semibold mb-4"
+        >
+          <Logo />
+        </Link>
+        {navItems.map(renderLink)}
+      </nav>
+    );
+  }
 
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={['Dashboards', 'Management', 'Support & Settings']}
-      className="w-full"
-    >
-      {navItems.map((group) => (
-        <AccordionItem value={group.title} key={group.title} className="border-b-0">
-          <AccordionTrigger
-            className={cn(
-              'px-2 py-1 text-sm font-medium text-muted-foreground hover:no-underline hover:text-foreground',
-              isCollapsed && 'justify-center px-0'
-            )}
-          >
-            <span className={cn(isCollapsed && 'hidden')}>{group.title}</span>
-            <ChevronRight className={cn("h-4 w-4 shrink-0 transition-transform duration-200", isCollapsed && 'hidden')} />
-          </AccordionTrigger>
-          <AccordionContent className="pb-1">
-            <SidebarMenu>
-              {group.items.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <Link href={item.href}>
-                    <SidebarMenuButton
-                      isActive={pathname === item.href}
-                      tooltip={item.label}
-                    >
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+      {navItems.map(renderLink)}
+    </nav>
   );
 }

@@ -1,4 +1,5 @@
 
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,7 +16,7 @@ const apps = [
 
 export default function AppsPage() {
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">App Management</h1>
         <Button>
@@ -74,6 +75,6 @@ export default function AppsPage() {
           </Table>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

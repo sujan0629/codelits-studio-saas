@@ -19,7 +19,7 @@ const tickets = [
 
 export default function SupportPage() {
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Support Tickets</h1>
         <Dialog>
@@ -84,6 +84,6 @@ export default function SupportPage() {
           </Table>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }
