@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Logo } from '@/components/logo';
@@ -19,8 +20,8 @@ export default function AppLayout({
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
 
   return (
-    <div className="grid min-h-screen w-full grid-cols-[auto_1fr]">
-      <div className="flex">
+    <div className="grid min-h-screen w-full md:grid-cols-[auto_1fr]">
+      <div className="hidden md:flex">
         <PrimaryNav activeItem={activePrimaryNav} setActiveItem={setActivePrimaryNav} />
         <SecondaryNav activeItem={activePrimaryNav} />
       </div>
