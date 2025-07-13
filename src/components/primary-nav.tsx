@@ -30,31 +30,33 @@ interface PrimaryNavProps {
 
 export function PrimaryNav({ activeItem, setActiveItem }: PrimaryNavProps) {
   return (
-    <div className="hidden md:flex flex-col items-center gap-4 border-r bg-background p-2">
-      <div className="flex h-[52px] items-center justify-center">
-        <Logo />
+    <aside className="hidden md:flex">
+      <div className="flex flex-col items-center gap-4 border-r bg-background p-2">
+        <div className="flex h-[52px] items-center justify-center">
+            <Logo />
+        </div>
+        <TooltipProvider>
+          <nav className="flex flex-col items-center gap-2">
+            {primaryNavItems.map((item) => (
+              <Tooltip key={item.id}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setActiveItem(item.id)}
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground',
+                      activeItem === item.id && 'bg-accent text-accent-foreground'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span className="sr-only">{item.label}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">{item.label}</TooltipContent>
+              </Tooltip>
+            ))}
+          </nav>
+        </TooltipProvider>
       </div>
-      <TooltipProvider>
-        <nav className="flex flex-col items-center gap-2">
-          {primaryNavItems.map((item) => (
-            <Tooltip key={item.id}>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => setActiveItem(item.id)}
-                  className={cn(
-                    'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground',
-                    activeItem === item.id && 'bg-accent text-accent-foreground'
-                  )}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span className="sr-only">{item.label}</span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">{item.label}</TooltipContent>
-            </Tooltip>
-          ))}
-        </nav>
-      </TooltipProvider>
-    </div>
+    </aside>
   );
 }

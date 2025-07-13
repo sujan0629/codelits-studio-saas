@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserNav } from './user-nav';
+import { Logo } from './logo';
 
 const navLinks = {
   dashboard: {
@@ -13,9 +14,7 @@ const navLinks = {
   },
   apps: {
     title: 'Applications',
-    links: [
-        { href: '/apps', label: 'Manage Apps' },
-    ],
+    links: [{ href: '/apps', label: 'Manage Apps' }],
   },
   team: {
     title: 'Team',
@@ -25,23 +24,23 @@ const navLinks = {
     title: 'Billing',
     links: [
       { href: '/billing', label: 'Subscription' },
-      { href: '/billing/history', label: 'Billing History' },
-      { href: '/billing/payment-methods', label: 'Payment Methods' },
+      // { href: '/billing/history', label: 'Billing History' },
+      // { href: '/billing/payment-methods', label: 'Payment Methods' },
     ],
   },
   support: {
     title: 'Support',
     links: [
       { href: '/support', label: 'My Tickets' },
-      { href: '/support/new', label: 'New Ticket' },
+      // { href: '/support/new', label: 'New Ticket' },
     ],
   },
   settings: {
     title: 'Settings',
     links: [
       { href: '/settings', label: 'Company Profile' },
-      { href: '/settings/security', label: 'Security' },
-      { href: '/settings/branding', label: 'Branding' },
+      // { href: '/settings/security', label: 'Security' },
+      // { href: '/settings/branding', label: 'Branding' },
     ],
   },
 };
@@ -98,7 +97,7 @@ export function SecondaryNav({ activeItem, isMobile = false }: SecondaryNavProps
   }
 
   return (
-    <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-background w-[280px]">
+    <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-background w-[220px]">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <h2 className="text-lg font-semibold">{navData.title}</h2>
         </div>

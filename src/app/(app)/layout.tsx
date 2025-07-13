@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { PrimaryNav } from '@/components/primary-nav';
 import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
+import { usePathname } from 'next/navigation';
 
 export default function AppLayout({
   children,
@@ -18,14 +19,15 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
+  const pathname = usePathname();
 
   return (
-    <div className="grid min-h-screen w-full grid-cols-[auto_1fr]">
+    <div className="flex min-h-screen w-full">
       <div className="flex">
         <PrimaryNav activeItem={activePrimaryNav} setActiveItem={setActivePrimaryNav} />
         <SecondaryNav activeItem={activePrimaryNav} />
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-1 flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
@@ -70,7 +72,7 @@ export default function AppLayout({
               <Bell className="h-4 w-4" />
               <span className="sr-only">Toggle notifications</span>
           </Button>
-           <div className="md:hidden">
+           <div className="hidden md:block">
             <UserNav />
            </div>
         </header>
