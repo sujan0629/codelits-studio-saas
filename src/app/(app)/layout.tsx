@@ -78,14 +78,11 @@ export default function AppLayout({
     return `md:ml-[${marginLeft}px]`;
   };
 
+  const currentTitle = SecondaryNav.navLinks[activePrimaryNav as keyof typeof SecondaryNav.navLinks]?.title || 'Dashboard';
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-        <div className="hidden md:flex md:fixed md:left-0 md:top-0 md:h-14 md:items-center md:border-r md:px-4 md:z-40 bg-background w-[72px]">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Logo expanded={false} />
-          </Link>
-        </div>
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
@@ -104,6 +101,9 @@ export default function AppLayout({
               </div>
           </SheetContent>
         </Sheet>
+        <div className="hidden md:block">
+            <h1 className="text-xl font-semibold">{currentTitle}</h1>
+        </div>
         <div className="relative ml-auto flex-1 md:grow-0">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

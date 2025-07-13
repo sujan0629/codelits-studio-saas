@@ -16,36 +16,30 @@ const navLinks = {
     title: 'Applications',
     links: [
         { href: '/apps', label: 'Manage Apps' },
-        { href: '/apps/discover', label: 'Discover' },
     ],
   },
   team: {
     title: 'Team',
     links: [
         { href: '/team', label: 'Users & Roles' },
-        { href: '/team/invitations', label: 'Invitations' },
     ],
   },
   billing: {
     title: 'Billing',
     links: [
-      { href: '/billing', label: 'Billing Summary' },
-      { href: '/billing/history', label: 'Billing History' },
+      { href: '/billing', label: 'Subscription' },
     ],
   },
   support: {
     title: 'Support',
     links: [
       { href: '/support', label: 'My Tickets' },
-      { href: '/support/new', label: 'Create Ticket' },
     ],
   },
   settings: {
     title: 'Settings',
     links: [
       { href: '/settings', label: 'Company Profile' },
-      { href: '/settings/security', label: 'Security' },
-      { href: '/settings/branding', label: 'Branding' },
     ],
   },
 };
@@ -112,10 +106,7 @@ function SecondaryNavComponent({ activeItem, isMobile = false, isOpen = true, on
         isOpen ? 'translate-x-0' : '-translate-x-full'
       )}
     >
-        <div className="flex h-[52px] items-center border-b px-4">
-            <h2 className="text-lg font-semibold">{navData.title}</h2>
-        </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pt-8">
             <nav className="grid items-start p-4 text-sm font-medium">
                 {renderNavSection(activeItem as keyof typeof navLinks)}
             </nav>
