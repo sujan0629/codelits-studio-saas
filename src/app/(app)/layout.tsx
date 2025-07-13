@@ -31,9 +31,9 @@ export default function AppLayout({
     setIsSecondaryNavOpen(true);
   }
   
-  // When a link in the secondary nav is clicked, we collapse the sidebars
+  // The secondary nav remains open on link clicks
   const handleSecondaryNavClick = () => {
-    setIsSecondaryNavOpen(false);
+    // No longer closing the nav here
   }
 
   return (
