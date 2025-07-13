@@ -29,7 +29,8 @@ export default function AppLayout({
 
   useEffect(() => {
     const currentPath = pathname.split('/')[1] || 'dashboard';
-    if (SecondaryNav.navLinks[currentPath as NavItem]) {
+    const navItem = SecondaryNav.navLinks[currentPath as NavItem];
+    if (navItem) {
         setActivePrimaryNav(currentPath as NavItem);
     }
   }, [pathname]);
@@ -59,18 +60,24 @@ export default function AppLayout({
 
   }, [isPrimaryNavExpanded]);
 
+  const handlePrimaryNavClick = (item: NavItem) => {
+    setActivePrimaryNav(item);
+    setIsPrimaryNavExpanded(false);
+  }
+
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
-      <div 
-        className="hidden md:flex fixed top-0 left-0 h-full z-20"
-        onMouseEnter={() => setIsPrimaryNavExpanded(true)} 
-        onMouseLeave={() => setIsPrimaryNavExpanded(false)}
-      >
-        <div ref={primaryNavRef} className="overflow-hidden">
+      <div className="hidden md:flex fixed top-0 left-0 h-full z-20">
+        <div 
+            ref={primaryNavRef}
+            className="overflow-hidden"
+            onMouseEnter={() => setIsPrimaryNavExpanded(true)} 
+            onMouseLeave={() => setIsPrimaryNavExpanded(false)}
+        >
             <PrimaryNav 
                 activeItem={activePrimaryNav} 
-                setActiveItem={setActivePrimaryNav}
+                setActiveItem={handlePrimaryNavClick}
                 isExpanded={isPrimaryNavExpanded} 
             />
         </div>
