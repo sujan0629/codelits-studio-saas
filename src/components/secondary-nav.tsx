@@ -146,20 +146,21 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
   }
 
   return (
-    <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-card">
-        <div className="flex h-14 items-center border-b px-6 lg:h-[60px]">
-            <h2 className="text-lg font-semibold text-foreground">{navData.title}</h2>
-        </div>
-        <div className="flex-1 overflow-y-auto pt-2">
-            <nav className="grid items-start px-4 text-sm font-medium">
-                {renderNavSection(activeItem as keyof typeof mainNavLinks)}
-            </nav>
-        </div>
-        <div className="mt-auto p-4 border-t">
-            <UserNav />
-        </div>
+    <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-card pl-6">
+      <div className="flex h-14 items-center border-b pl-2 pr-4 lg:h-[60px]">
+        <h2 className="text-lg font-semibold text-foreground">{navData.title}</h2>
+      </div>
+      <div className="flex-1 overflow-y-auto pt-2">
+        <nav className="grid items-start pl-0 pr-2 text-sm font-medium">
+          {renderNavSection(activeItem as keyof typeof mainNavLinks)}
+        </nav>
+      </div>
+      <div className="mt-auto p-4 border-t">
+        <UserNav />
+      </div>
     </div>
   );
+  
 }
 
 export const SecondaryNav = Object.assign(SecondaryNavComponent, { navLinks });

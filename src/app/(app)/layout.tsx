@@ -1,4 +1,3 @@
-
 'use client';
 
 import { UserNav } from '@/components/user-nav';
@@ -13,6 +12,7 @@ import { SecondaryNav, type NavItem } from '@/components/secondary-nav';
 import { gsap } from 'gsap';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/logo';
+import { useRouter } from 'next/navigation';
 
 export default function AppLayout({
   children,
@@ -20,74 +20,92 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>('dashboard');
-  const [isPrimaryNavExpanded, setIsPrimaryNavExpanded] = useState(false);
+  const [isPrimaryNavHovered, setIsPrimaryNavHovered] = useState(false);
+  
+  const router = useRouter();
 
   const primaryNavRef = useRef<HTMLDivElement>(null);
   const secondaryNavRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
+  // Update active nav based on URL path
   useEffect(() => {
     const currentPath = pathname.split('/')[1] || 'dashboard';
-    const navItem = SecondaryNav.navLinks[currentPath as NavItem];
-    if (navItem) {
+    if (SecondaryNav.navLinks[currentPath as NavItem]) {
       setActivePrimaryNav(currentPath as NavItem);
     }
   }, [pathname]);
 
+  // On mount, set initial margin-left of main content (collapsed nav + secondary nav)
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.style.marginLeft = '336px'; // 56 + 280 px
+    }
+  }, []);
+
+  // Animate widths and margins on hover state change
   useEffect(() => {
     const primaryNavWidthExpanded = 240;
     const primaryNavWidthCollapsed = 56;
     const secondaryNavWidth = 280;
 
-    gsap.to(primaryNavRef.current, {
-      width: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
-      duration: 0.3,
-      ease: 'power2.inOut',
-    });
+    const primaryNavWidth = isPrimaryNavHovered ? primaryNavWidthExpanded : primaryNavWidthCollapsed;
 
-    gsap.to(secondaryNavRef.current, {
-      left: isPrimaryNavExpanded ? primaryNavWidthExpanded : primaryNavWidthCollapsed,
+    gsap.to(primaryNavRef.current, {
+      width: primaryNavWidth,
       duration: 0.3,
       ease: 'power2.inOut',
     });
 
     gsap.to(mainContentRef.current, {
-      marginLeft: isPrimaryNavExpanded
-        ? primaryNavWidthExpanded + secondaryNavWidth
-        : primaryNavWidthCollapsed + secondaryNavWidth,
+      marginLeft: primaryNavWidth + secondaryNavWidth,
       duration: 0.3,
       ease: 'power2.inOut',
     });
-  }, [isPrimaryNavExpanded]);
+  }, [isPrimaryNavHovered]);
+  const getFirstSecondaryLink = (item: NavItem) => {
+    const links = SecondaryNav.navLinks[item]?.links;
+    return links && links.length > 0 ? links[0].href : '/';
+  };
 
+  // This is your primary nav click handler passed down to PrimaryNav component
   const handlePrimaryNavClick = (item: NavItem) => {
     setActivePrimaryNav(item);
-    setIsPrimaryNavExpanded(false);
+    setIsPrimaryNavHovered(false); // shrink primary nav on click
+
+    // Navigate to first secondary nav link for this primary item
+    const firstLink = getFirstSecondaryLink(item);
+    router.push(firstLink);
   };
 
   return (
     <div className="min-h-screen w-full bg-background relative overflow-x-hidden">
-      <div className="hidden md:flex fixed top-0 left-0 h-full z-20">
-        <div
-          ref={primaryNavRef}
-          className="overflow-hidden"
-          onMouseEnter={() => setIsPrimaryNavExpanded(true)}
-          onMouseLeave={() => setIsPrimaryNavExpanded(false)}
-        >
-          <PrimaryNav
-            activeItem={activePrimaryNav}
-            setActiveItem={handlePrimaryNavClick}
-            isExpanded={isPrimaryNavExpanded}
-          />
-        </div>
-        <div ref={secondaryNavRef} className="fixed top-0 h-full w-[280px]">
-          <SecondaryNav activeItem={activePrimaryNav} />
-        </div>
+      {/* Primary Nav wrapper */}
+      <div
+        ref={primaryNavRef}
+        className="hidden md:flex fixed top-0 left-0 h-full z-20"
+        style={{ width: 56 }} // start collapsed width inline for initial render
+      >
+        <PrimaryNav
+          activeItem={activePrimaryNav}
+          onItemClick={handlePrimaryNavClick}
+          isHovered={isPrimaryNavHovered}
+          setIsHovered={setIsPrimaryNavHovered}
+        />
       </div>
 
-      <div ref={mainContentRef} className="flex flex-col md:ml-[336px]">
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
+      {/* Secondary Nav wrapper */}
+      <div
+        ref={secondaryNavRef}
+        className="fixed top-0 left-[56px] h-full w-[280px] z-10"
+      >
+        <SecondaryNav activeItem={activePrimaryNav} />
+      </div>
+
+      {/* Main content */}
+      <div ref={mainContentRef} className="flex flex-col">
+        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -111,6 +129,7 @@ export default function AppLayout({
               </div>
             </SheetContent>
           </Sheet>
+
           <div className="w-full flex-1">
             <form>
               <div className="relative">
@@ -123,13 +142,16 @@ export default function AppLayout({
               </div>
             </form>
           </div>
+
           <Button variant="outline" size="icon" className="h-8 w-8">
             <Bell className="h-4 w-4" />
             <span className="sr-only">Toggle notifications</span>
           </Button>
           <UserNav />
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">{children}</main>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40">
+          {children}
+        </main>
       </div>
     </div>
   );

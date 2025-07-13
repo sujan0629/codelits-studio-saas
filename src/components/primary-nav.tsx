@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -9,16 +8,13 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
+import Link from 'next/link';
 import { Logo } from './logo';
 import { cn } from '@/lib/utils';
 import type { NavItem } from './secondary-nav';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const primaryNavItems = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', href:'/dashboard' },
   { id: 'apps', icon: AppWindow, label: 'Apps', href: '/apps' },
   { id: 'team', icon: Users, label: 'Team', href: '/team' },
   { id: 'billing', icon: CreditCard, label: 'Billing', href: '/billing' },
@@ -28,65 +24,54 @@ const primaryNavItems = [
 
 interface PrimaryNavProps {
   activeItem: NavItem;
-  setActiveItem: (item: NavItem) => void;
-  isExpanded: boolean;
+  onItemClick: (item: NavItem) => void;
+  isHovered: boolean;
+  setIsHovered: (val: boolean) => void;
 }
 
-export function PrimaryNav({ activeItem, setActiveItem, isExpanded }: PrimaryNavProps) {
-  const pathname = usePathname();
 
-  useEffect(() => {
-    const currentPath = pathname.split('/')[1] || 'dashboard';
-    if (primaryNavItems.some(item => item.id === currentPath)) {
-      setActiveItem(currentPath as NavItem);
-    }
-  }, [pathname, setActiveItem]);
-
+export function PrimaryNav({ activeItem, onItemClick, isHovered, setIsHovered }: PrimaryNavProps) {
   return (
-    <aside className="h-full flex flex-col items-start gap-4 border-r bg-background p-2">
-      <div className={cn('flex h-[52px] items-center shrink-0', isExpanded ? 'px-4' : 'px-2 justify-center')}>
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Logo expanded={isExpanded} />
+    <aside
+      className={cn(
+        "hidden md:fixed md:left-0 md:top-0 md:flex h-full z-20 transition-all duration-300 ease-in-out",
+        isHovered ? 'w-56' : 'w-[62px]'
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="flex flex-col items-center gap-4 border-r bg-background p-2 w-full">
+        <Link href="/dashboard" className="flex h-[52px] items-center justify-center self-start px-2">
+          <Logo expanded={isHovered} />
         </Link>
-      </div>
-      <TooltipProvider delayDuration={0}>
-        <nav className="flex flex-col items-start gap-2 w-full">
-          {primaryNavItems.map((item) => {
-             const isActive = activeItem === item.id;
-             return (
-              <Tooltip key={item.id}>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={item.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActiveItem(item.id);
-                    }}
-                    className={cn(
-                      'flex h-9 items-center rounded-lg text-muted-foreground transition-colors hover:text-foreground w-full px-3 gap-3',
-                      isActive && 'bg-accent text-accent-foreground',
-                      !isExpanded && 'w-9 justify-center'
-                    )}
-                  >
-                    <item.icon className="h-5 w-5 shrink-0" />
-                    <span
-                      className={cn(
-                        'whitespace-nowrap transition-opacity duration-200',
-                        isExpanded ? 'opacity-100' : 'opacity-0 sr-only'
-                      )}
-                    >
-                      {item.label}
-                    </span>
-                  </Link>
-                </TooltipTrigger>
-                {!isExpanded && (
-                  <TooltipContent side="right">{item.label}</TooltipContent>
+        <nav className="flex flex-col items-center gap-2 w-full">
+          {primaryNavItems.map((item) => (
+            <Link
+              href={item.href}
+              key={item.id}
+              onClick={(e) => {
+                e.preventDefault();
+                onItemClick(item.id);
+                setIsHovered(false); // Shrink nav on click
+              }}
+              className={cn(
+                'flex items-center gap-3 w-full justify-start rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground',
+                activeItem === item.id && 'bg-accent text-accent-foreground',
+              )}
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              <span
+                className={cn(
+                  "transition-opacity duration-200",
+                  isHovered ? 'opacity-100' : 'opacity-0'
                 )}
-              </Tooltip>
-             )
-          })}
+              >
+                {item.label}
+              </span>
+            </Link>
+          ))}
         </nav>
-      </TooltipProvider>
+      </div>
     </aside>
   );
 }
