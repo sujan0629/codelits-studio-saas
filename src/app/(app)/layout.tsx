@@ -34,7 +34,7 @@ export default function AppLayout({
   }, [pathname]);
 
   useEffect(() => {
-    const primaryNavWidth = isPrimaryNavExpanded ? 280 : 56;
+    const primaryNavWidth = isPrimaryNavExpanded ? 240 : 56;
     const secondaryNavWidth = 280;
 
     gsap.to(primaryNavRef.current, { width: primaryNavWidth, duration: 0.3, ease: 'power2.inOut' });
@@ -93,7 +93,7 @@ export default function AppLayout({
                 </div>
             </SheetContent>
           </Sheet>
-          <div className="w-full flex-1">
+           <div className="w-full flex-1">
             <h1 className="text-lg font-semibold capitalize">{SecondaryNav.navLinks[activePrimaryNav]?.title}</h1>
           </div>
            <div className="w-full flex-1">

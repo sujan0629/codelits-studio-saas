@@ -105,6 +105,9 @@ function SecondaryNavComponent({ activeItem, isMobile = false }: SecondaryNavPro
 
   return (
     <div className="hidden md:flex h-full max-h-screen flex-col gap-2 border-r bg-card w-[280px]">
+        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <h2 className="text-lg font-semibold">{navData.title}</h2>
+        </div>
         <div className="flex-1 overflow-y-auto pt-4">
             <nav className="grid items-start p-4 text-sm font-medium">
                 {renderNavSection(activeItem as keyof typeof mainNavLinks)}
