@@ -22,9 +22,19 @@ export default function AppLayout({
   const pathname = usePathname();
   
   const getNavItemFromPath = (path: string): NavItem => {
-    const segment = path.split('/')[1];
-    const navItems: NavItem[] = ['dashboard', 'apps', 'team', 'billing', 'support', 'settings'];
-    return navItems.find(item => item === segment) || 'dashboard';
+    // Look for a match in the nav links definitions
+    for (const key in SecondaryNav.navLinks) {
+      const navKey = key as keyof typeof SecondaryNav.navLinks;
+      if (SecondaryNav.navLinks[navKey].links.some(link => path.startsWith(link.href))) {
+        return navKey;
+      }
+    }
+    // Fallback for base paths
+    const segment = path.split('/')[1] as NavItem;
+    if (SecondaryNav.navLinks[segment]) {
+      return segment;
+    }
+    return 'dashboard';
   };
 
   const [activePrimaryNav, setActivePrimaryNav] = useState<NavItem>(getNavItemFromPath(pathname));
@@ -32,7 +42,8 @@ export default function AppLayout({
   const [isSecondaryNavOpen, setIsSecondaryNavOpen] = useState(true);
 
   useEffect(() => {
-    setActivePrimaryNav(getNavItemFromPath(pathname));
+    const newActiveItem = getNavItemFromPath(pathname);
+    setActivePrimaryNav(newActiveItem);
     setIsSecondaryNavOpen(true);
   }, [pathname]);
 
@@ -44,11 +55,26 @@ export default function AppLayout({
     if (isPrimaryNavHovered) {
         setIsPrimaryNavHovered(false);
     }
-  }
+  };
   
   const handleSecondaryNavClick = () => {
     // The secondary nav should remain open on link clicks
-  }
+  };
+
+  // Determine the correct left margin for the main content
+  const getMainContentMargin = () => {
+    const primaryNavWidth = 72;
+    const secondaryNavWidth = 220;
+    const expandedPrimaryNavWidth = 224;
+
+    if (isPrimaryNavHovered) {
+      return `md:ml-[${expandedPrimaryNavWidth}px]`;
+    }
+    if (isSecondaryNavOpen) {
+      return `md:ml-[${primaryNavWidth + secondaryNavWidth}px]`;
+    }
+    return `md:ml-[${primaryNavWidth}px]`;
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -103,10 +129,7 @@ export default function AppLayout({
         </div>
         <main className={cn(
           "flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-muted/40 transition-all duration-300 ease-in-out overflow-y-auto",
-          // When hovered, secondary nav is closed, main content should not have extra margin
-          isPrimaryNavHovered ? 'md:ml-[224px]' : 'md:ml-[72px]',
-          // When secondary nav is open, add margin
-          isSecondaryNavOpen && !isPrimaryNavHovered ? 'md:ml-[280px]' : 'md:ml-[72px]'
+          getMainContentMargin()
           )}>
           {children}
         </main>

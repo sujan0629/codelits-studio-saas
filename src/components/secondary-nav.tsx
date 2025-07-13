@@ -20,27 +20,24 @@ const navLinks = {
     ],
   },
   team: {
-    title: 'Team Management',
+    title: 'Team',
     links: [
         { href: '/team', label: 'Users & Roles' },
         { href: '/team/invitations', label: 'Invitations' },
     ],
   },
   billing: {
-    title: 'Subscription',
+    title: 'Billing',
     links: [
       { href: '/billing', label: 'Billing Summary' },
       { href: '/billing/history', label: 'Billing History' },
-      { href: '/billing/payment-methods', label: 'Payment Methods' },
-      { href: '/billing/settings', label: 'Billing Settings' },
     ],
   },
   support: {
-    title: 'Support Center',
+    title: 'Support',
     links: [
       { href: '/support', label: 'My Tickets' },
       { href: '/support/new', label: 'Create Ticket' },
-      { href: '/support/docs', label: 'Documentation' },
     ],
   },
   settings: {
@@ -48,7 +45,6 @@ const navLinks = {
     links: [
       { href: '/settings', label: 'Company Profile' },
       { href: '/settings/security', label: 'Security' },
-      { href: '/settings/notifications', label: 'Notifications' },
       { href: '/settings/branding', label: 'Branding' },
     ],
   },
@@ -63,13 +59,14 @@ interface SecondaryNavProps {
   onLinkClick?: () => void;
 }
 
-export function SecondaryNav({ activeItem, isMobile = false, isOpen = true, onLinkClick }: SecondaryNavProps) {
+function SecondaryNavComponent({ activeItem, isMobile = false, isOpen = true, onLinkClick }: SecondaryNavProps) {
   const pathname = usePathname();
 
   const renderNavSection = (itemKey: keyof typeof navLinks) => {
     const item = navLinks[itemKey];
     return (
       <div key={item.title}>
+        {!isMobile && <div className="h-4" />}
         {isMobile && <h2 className="my-4 px-4 text-lg font-semibold tracking-tight">{item.title}</h2>}
         <div className="space-y-1">
           {item.links.map((link) => {
@@ -81,7 +78,7 @@ export function SecondaryNav({ activeItem, isMobile = false, isOpen = true, onLi
                 onClick={onLinkClick}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-                  isActive && 'bg-muted text-primary',
+                  isActive ? 'bg-muted text-primary' : 'hover:bg-muted/50',
                   'font-medium'
                 )}
               >
@@ -126,3 +123,5 @@ export function SecondaryNav({ activeItem, isMobile = false, isOpen = true, onLi
     </aside>
   );
 }
+
+export const SecondaryNav = Object.assign(SecondaryNavComponent, { navLinks });
