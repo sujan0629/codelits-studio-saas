@@ -9,7 +9,6 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
-import { Logo } from './logo';
 import { cn } from '@/lib/utils';
 import type { NavItem } from './secondary-nav';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';

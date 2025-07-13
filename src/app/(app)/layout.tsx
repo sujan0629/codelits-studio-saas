@@ -67,18 +67,25 @@ export default function AppLayout({
     const secondaryNavWidth = 220;
     const expandedPrimaryNavWidth = 224;
 
+    let marginLeft = primaryNavWidth;
+
     if (isPrimaryNavHovered) {
-      return `md:ml-[${expandedPrimaryNavWidth}px]`;
+        marginLeft = expandedPrimaryNavWidth;
+    } else if (isSecondaryNavOpen) {
+        marginLeft = primaryNavWidth + secondaryNavWidth;
     }
-    if (isSecondaryNavOpen) {
-      return `md:ml-[${primaryNavWidth + secondaryNavWidth}px]`;
-    }
-    return `md:ml-[${primaryNavWidth}px]`;
+
+    return `md:ml-[${marginLeft}px]`;
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <div className="hidden md:flex md:fixed md:left-0 md:top-0 md:h-14 md:items-center md:border-r md:px-4 md:z-40 bg-background w-[72px]">
+          <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Logo expanded={false} />
+          </Link>
+        </div>
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
